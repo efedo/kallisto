@@ -31,3 +31,5 @@ ext/zlib-ng/src/
 ext/zlib-ng/build/
 ext/zlib-ng/tmp/
 src/.Rhistory
+/.vs
+/out/build/x64-Debug
