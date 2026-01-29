@@ -33,4 +33,4 @@ ext/zlib-ng/tmp/
 src/.Rhistory
 ext/hdf5
 /.vs
-/out/build/x64-Debug
+/out
