@@ -23,9 +23,9 @@ endif(COMPILATION_ARCH MATCHES "OFF")
 
 add_compile_definitions("MAX_KMER_SIZE=${MAX_KMER_SIZE}")
 
-
 option(USE_HDF5 "Compile with HDF5 support" OFF) #OFF by default
 option(USE_BAM "Compile with HTSLIB support" OFF) # OFF by default
+option(ZLIBNG "Compile with zlib-ng instead of zlib" OFF) # OFF by default)
 
 if(USE_HDF5)
     cmake_policy(SET CMP0074 NEW)
@@ -70,8 +70,13 @@ else()
 endif()
 
 #add_compile_options(-Wall -Wno-unused-function)
-add_compile_options(-Wno-deprecated-declarations -Wno-subobject-linkage) # Suppress bifrost warning
-set(PROJECT_BIFROST_CMAKE_CXX_FLAGS "-Wno-subobject-linkage -Wno-return-type") # Suppress bifrost warning
+# Suppress bifrost warning - use compiler-specific flags
+if(MSVC)
+    # MSVC equivalents: disable specific warnings
+    add_compile_options(/wd4996 /wd4244)  # Suppress deprecation and conversion warnings
+else()
+    add_compile_options(-Wno-deprecated-declarations -Wno-subobject-linkage)
+endif()
 
 if(LINK MATCHES static)
     message("static build")
@@ -93,38 +98,18 @@ ExternalProject_Add(htslib
 )
 endif(USE_BAM)
 
-ExternalProject_Add(bifrost
-    PREFIX ${PROJECT_SOURCE_DIR}/ext/bifrost
-    SOURCE_DIR ${PROJECT_SOURCE_DIR}/ext/bifrost
-    BUILD_IN_SOURCE 1
-    CONFIGURE_COMMAND mkdir -p build && cd build && cmake .. -DMAX_KMER_SIZE=${MAX_KMER_SIZE} -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_CXX_FLAGS=${PROJECT_BIFROST_CMAKE_CXX_FLAGS} ${DO_ENABLE_AVX2} ${DO_ENABLE_COMPILATION_ARCH}
-    BUILD_COMMAND cd build && make
-    INSTALL_COMMAND ""
-)
-
 if (ZLIBNG)
-    message("zlib-ng enabled.")
-    ExternalProject_Add(zlib-ng
-    PREFIX ${PROJECT_SOURCE_DIR}/ext/zlib-ng
-    SOURCE_DIR ${PROJECT_SOURCE_DIR}/ext/zlib-ng
-    BUILD_IN_SOURCE 1
-    CONFIGURE_COMMAND mkdir -p zlib-ng && cd zlib-ng && cmake .. -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF -DCMAKE_INSTALL_PREFIX=${PREFIX}
-    BUILD_COMMAND cd zlib-ng && make
-    INSTALL_COMMAND ""
-    )
+    include(${PROJECT_SOURCE_DIR}/ext/zlib-ng.cmake)
+else()
+    include(${PROJECT_SOURCE_DIR}/ext/zlib.cmake)
 endif(ZLIBNG)
+
+# Add bifrost via FetchContent
+include(${PROJECT_SOURCE_DIR}/ext/bifrost.cmake)
 
 if (USE_BAM)
     include_directories(${htslib_PREFIX}/src/htslib)
 endif(USE_BAM)
-
-include_directories(${EXT_PROJECTS_DIR}/bifrost/build/src)
-
-ExternalProject_Get_Property(bifrost install_dir)
-include_directories(${install_dir}/src)
-
-
-
 
 add_subdirectory(src)
 include_directories(${EXT_PROJECTS_DIR})
