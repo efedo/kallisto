@@ -1,13 +1,12 @@
 include(FetchContent)
 
-# Pin the Bifrost tree from the last revision where it was vendored with
-# kallisto. It carries the binary-index API used by this source tree; neither
-# upstream Bifrost nor the separate Windows fork has that API.
+# Pin kallisto's Bifrost fork. It carries the binary-index API used by this
+# source tree; upstream Bifrost does not provide that API.
 FetchContent_Declare(
     bifrost
-    GIT_REPOSITORY https://github.com/efedo/kallisto.git
-    GIT_TAG 53be8c92830ae0bb2940e919039d3f16d8b182f3
-    GIT_SHALLOW FALSE)
+    GIT_REPOSITORY https://github.com/efedo/bifrost.git
+    GIT_TAG c1d0364e24b6b3aad4c93e2abe545d2c9193a4a7
+    GIT_SHALLOW TRUE)
 
 set(MAX_KMER_SIZE "${MAX_KMER_SIZE}" CACHE STRING "Maximum k-mer size for Bifrost" FORCE)
 set(MAX_GMER_SIZE "${MAX_KMER_SIZE}" CACHE STRING "Maximum g-mer size for Bifrost" FORCE)
@@ -28,7 +27,6 @@ if(NOT bifrost_POPULATED)
         cmake_policy(SET CMP0169 OLD)
     endif()
     FetchContent_Populate(bifrost)
-    set(bifrost_SOURCE_DIR "${bifrost_SOURCE_DIR}/ext/bifrost")
 
     # The upstream CMake project unconditionally adds GCC/Clang flags and gives
     # its static and import libraries the same name on Windows.  Keep this small
