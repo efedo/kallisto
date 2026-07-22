@@ -594,7 +594,7 @@ void MasterProcessor::update(const std::vector<uint32_t> &c, const std::vector<R
       bus_umi_sum += bus_umi_len[i];
     }
 
-    if (bus_bc_sum < 10000 or bus_umi_sum < 10000) {
+    if (bus_bc_sum < 10000 || bus_umi_sum < 10000) {
       for (int i = 0; i < 32; i++) {
         bus_bc_len[i] += bc_len[i];
         bus_umi_len[i] += umi_len[i];

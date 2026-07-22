@@ -1,6 +1,11 @@
 #include "KmerIndex.h"
 
 #include <ctype.h>
+#include <sys/stat.h>
+
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 #include <algorithm>
 #include <functional>
@@ -179,9 +184,10 @@ int hamming(const char* a, const char* b) {
   return h;
 }
 
-int my_mkdir_kmer_index(const char* path, mode_t mode) {
-#ifdef _WIN64
-  return mkdir(path);
+int my_mkdir_kmer_index(const char* path, int mode) {
+#ifdef _WIN32
+  (void)mode;
+  return _mkdir(path);
 #else
   return mkdir(path, mode);
 #endif
@@ -192,7 +198,11 @@ std::string generate_tmp_file(std::string seed, std::string tmp_dir) {
   auto intStat = stat(tmp_dir.c_str(), &stFileInfo);
   if (intStat == 0) {
     // file/dir exits
+#ifdef _WIN32
+    if ((stFileInfo.st_mode & _S_IFDIR) == 0) {
+#else
     if (!S_ISDIR(stFileInfo.st_mode)) {
+#endif
       std::cerr << "Error: file " << tmp_dir << " exists and is not a directory" << std::endl;
       exit(1);
     }

@@ -1,0 +1,33 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "msvc-debug",
+      "displayName": "MSVC x64 Debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/msvc-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "USE_BAM": "OFF",
+        "USE_HDF5": "ON",
+        "ZLIBNG": "ON"
+      }
+    },
+    {
+      "name": "msvc-release",
+      "displayName": "MSVC x64 Release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/msvc-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "USE_BAM": "OFF",
+        "USE_HDF5": "ON",
+        "ZLIBNG": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "msvc-debug", "configurePreset": "msvc-debug" },
+    { "name": "msvc-release", "configurePreset": "msvc-release" }
+  ]
+}

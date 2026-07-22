@@ -2,10 +2,23 @@
 
 Requirements
 ------------
-- CMake version >= 2.8.12
+- CMake version >= 3.20
     - Can be installed via homebrew: `brew install cmake`
 - zlib (should be installed on OSX >= 10.9)
 - HDF5 C libraries
+
+### Windows / MSVC
+
+Open an x64 Visual Studio Developer Command Prompt in the repository and run:
+
+```
+cmake --preset msvc-release
+cmake --build --preset msvc-release --parallel
+```
+
+The CMake build fetches pinned zlib-ng, Bifrost, and HDF5 if a system HDF5 is
+not available. Native BAM input is not currently available: the vendored
+HTSlib release has no MSVC build, so `USE_BAM` must remain `OFF` on Windows.
 
 Installation
 ------------

@@ -13,7 +13,7 @@
 
 #include "hdf5.h"
 
-#ifdef _WIN64
+#ifdef _WIN32
 typedef unsigned int uint;
 #endif
 

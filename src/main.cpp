@@ -1,5 +1,13 @@
-#include <getopt.h>
+#include "getopt_compat.h"
+
 #include <sys/stat.h>
+
+#ifdef _WIN32
+#include <direct.h>
+#ifndef S_ISDIR
+#define S_ISDIR(mode) (((mode) & _S_IFDIR) != 0)
+#endif
+#endif
 #include <time.h>
 
 #include <CompactedDBG.hpp>
@@ -29,9 +37,10 @@
 #define ERROR_STR "Error:"
 
 
-int my_mkdir(const char *path, mode_t mode) {
-#ifdef _WIN64
-  return mkdir(path);
+int my_mkdir(const char *path, int mode) {
+#ifdef _WIN32
+  (void)mode;
+  return _mkdir(path);
 #else
   return mkdir(path, mode);
 #endif
