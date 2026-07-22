@@ -1,5 +1,9 @@
 # kallisto
 
+[![Build and test](https://github.com/efedo/kallisto/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/efedo/kallisto/actions/workflows/ci.yml)
+
+The CI workflow builds and runs the unit tests with GCC, Clang, and native MSVC.
+
 __kallisto__ is a program for quantifying abundances of transcripts from
 RNA-Seq data, or more generally of target sequences using high-throughput
 sequencing reads. It is based on the novel idea of _pseudoalignment_ for
