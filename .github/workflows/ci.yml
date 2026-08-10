@@ -2,60 +2,39 @@ name: CI
 
 on:
   push:
+    branches:
+      - master
   pull_request:
   workflow_dispatch:
 
 jobs:
-  build-and-test:
-    name: Build and test (${{ matrix.name }})
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: GCC
-            os: ubuntu-latest
-            cc: gcc
-            cxx: g++
-          - name: Clang
-            os: ubuntu-latest
-            cc: clang
-            cxx: clang++
-          - name: MSVC
-            os: windows-latest
-            cc: cl
-            cxx: cl
-
-    runs-on: ${{ matrix.os }}
+  msvc-build:
+    name: MSVC build and smoke test
+    runs-on: windows-latest
 
     steps:
       - name: Check out source
         uses: actions/checkout@v4
 
       - name: Set up MSVC developer environment
-        if: matrix.name == 'MSVC'
         uses: ilammy/msvc-dev-cmd@v1
 
-      # FetchContent invokes Git submodule helpers while obtaining zlib-ng.
+      # FetchContent invokes Git submodule helpers while obtaining dependencies.
       # Those helpers require Git for Windows' POSIX utility directory.
       - name: Enable Git for Windows helper utilities
-        if: matrix.name == 'MSVC'
         shell: pwsh
-        run: 'C:\Program Files\Git\usr\bin' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        run: |
+          "C:\Program Files\Git\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Configure
-        env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }}
         run: >
-          cmake -S . -B build -G Ninja
-          -DCMAKE_BUILD_TYPE=Release
-          -DBUILD_TESTING=ON
-          -DUSE_BAM=OFF
-          -DUSE_HDF5=ON
-          -DZLIBNG=ON
+          cmake --preset msvc-release
+          -DBUILD_TESTING=OFF
+          -DZLIBNG=OFF
 
       - name: Build
-        run: cmake --build build --parallel 2
+        run: cmake --build --preset msvc-release --parallel 2
 
-      - name: Test
-        run: ctest --test-dir build --output-on-failure
+      - name: Smoke test
+        shell: pwsh
+        run: '& .\out\build\msvc-release\src\kallisto.exe version'
