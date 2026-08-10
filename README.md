@@ -1,8 +1,10 @@
-# kallisto
+# kallisto - MSVC port
 
-[![Build and test](https://github.com/efedo/kallisto/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/efedo/kallisto/actions/workflows/ci.yml)
+> **Port note:** This fork is a GPU-accelerated, MSVC-compatible port of [kallisto](https://github.com/pachterlab/kallisto).
 
-The CI workflow builds and runs the unit tests with GCC, Clang, and native MSVC.
+[![MSVC build](https://github.com/efedo/kallisto/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/efedo/kallisto/actions/workflows/ci.yml)
+
+The CI workflow performs a native MSVC release build and executable smoke test.
 
 __kallisto__ is a program for quantifying abundances of transcripts from
 RNA-Seq data, or more generally of target sequences using high-throughput

@@ -32,7 +32,7 @@ if(TARGET zlibstatic)
 endif()
 # Hide shared zlib from build
 if(TARGET zlib)
-    set_target_properties(zlib PROPERTIES EXCLUDE_FROM_ALL)
+    set_target_properties(zlib PROPERTIES EXCLUDE_FROM_ALL TRUE)
 endif()
 
 # Set variables for FindZLIB.cmake compatibility and parent scope
